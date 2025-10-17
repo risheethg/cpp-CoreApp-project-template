@@ -1,0 +1,3 @@
+[submodule "Mercury/vendor/imgui"]
+	path = Mercury/vendor/imgui
+	url = https://github.com/risheethg/imgui.git
