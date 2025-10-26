@@ -27,3 +27,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 
 #include "Application/Core/Log.h"
+
+// Graphics API
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>

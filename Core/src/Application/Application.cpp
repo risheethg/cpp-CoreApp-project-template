@@ -19,18 +19,25 @@ namespace Project {
 	void Application::Init() {
 		s_Application = this;
 		Log::Init();
-		PROJECT_CORE_INFO("Core Has Been Initialized!");
+		PROJECT_CORE_INFO("Application Has been Initialized!");
+		m_Window = new Window();
+		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 		for (Layer* layer : m_LayerStack)
 			layer->OnAttach();
 	}
 
 	void Application::Shutdown() {
+		delete m_Window;
 	}
 
 	void Application::Run() {
 		while (m_Running) {
+			glClearColor(0.8f, 0.0f, 0.8f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			m_Window->OnUpdate();
 		}
 	}
 
@@ -40,6 +47,8 @@ namespace Project {
 			layer->OnEvent(event);
 		PROJECT_CORE_TRACE(event.ToString());
 		EventDispatcher eventDispatcher(event);
+		eventDispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnApplicationCloseEvent));
+		eventDispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResizeEvent));
 	}
 
 	void Application::PushOverlay(Layer* overlay) {
@@ -56,6 +65,17 @@ namespace Project {
 
 	void Application::PopLayer(Layer* layer) {
 		m_LayerStack.PopLayer(layer);
+	}
+
+	bool Application::OnApplicationCloseEvent(WindowCloseEvent& e) {
+		m_Running = false;
+		return true;
+	}
+
+	bool Application::OnWindowResizeEvent(WindowResizeEvent& event) {
+		m_Window->SetWidth(event.GetWidth());
+		m_Window->SetHeight(event.GetHeight());
+		return true;
 	}
 
 }

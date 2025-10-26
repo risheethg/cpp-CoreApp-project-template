@@ -2,7 +2,7 @@
 # C++ Core-App Project Template
 
 A clean, modular **C++ project template** that follows a **Core–App architecture**. Uses  **Premake5** for easy project generation across different platforms and IDEs. [The included `premake5.lua` file is **mainly** configured for **Windows Only**. You are free to modify the file to suit your OS as you see fit! ] 
-This template is designed to help you quickly bootstrap new C++ projects with a structured setup that separates reusable engine/core code from application-specific logic.
+This template is designed to help you quickly bootstrap new C++ projects with OpenGL and ImGui with a structured setup that separates reusable engine/core code from application-specific logic.
 
 ---
 
@@ -34,7 +34,7 @@ cpp-CoreApp-project-template/
 │        │    │   ├── Events
 │        │    │   │   ├── Event.h
 │        │    │   │   ├── MouseEvents.h
-│        │    │   │   └── WindowEvents.h
+│        │    │   │   └── WindowEvents.h                  
 │        │    │   │
 │        │    │   ├── Layers
 │        │    │   │   ├── Layer.cpp
@@ -44,6 +44,8 @@ cpp-CoreApp-project-template/
 │        │    │   │
 │        │    │   ├── Log.cpp
 │        │    │   └── Log.h
+│        │    │
+│        │    │                   #TO BE UPDATED LATER
 │        │    │
 │        │    ├── Application.cpp
 │        │    ├── Application.h
@@ -92,7 +94,7 @@ Follow these steps to set up and run the project:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/cpp-CoreApp-project-template.git
+git clone --recurse-submodules https://github.com/yourusername/cpp-CoreApp-project-template.git   #Important to recursive clone as ImGui is a submodule.
 cd cpp-CoreApp-project-template
 ```
 

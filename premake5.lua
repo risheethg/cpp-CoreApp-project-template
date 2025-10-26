@@ -1,4 +1,4 @@
-workspace "cpp-CoreApp-project-template"
+workspace "cpp-CoreApp-project-template-with-OpenGL-and-ImGui"
     architecture "x64"        
     startproject "App"
     
@@ -11,7 +11,16 @@ workspace "cpp-CoreApp-project-template"
     outputdir = "%{cfg.buildcfg}-%{cfg.architecture}"
 
     IncludeDir = {}
+    IncludeDir["GLFW"] = "Core/vendor/GLFW/include"
+    IncludeDir["Glad"] = "Core/vendor/Glad/include"
+    IncludeDir["glm"] = "Core/vendor/glm"
+    IncludeDir["assimp"] = "Core/vendor/assimp/include"
+    IncludeDir["ImGui"] = "Core/vendor/imgui"
+    IncludeDir["stb_image"] = "Core/vendor/stb_image"
     IncludeDir["spdlog"] = "Core/vendor/spdlog/include"
+
+    include "Core/vendor/Glad"
+    include "Core/vendor/GLFW"
 
 project "Core"
     location "Core"
@@ -31,6 +40,11 @@ project "Core"
         "%{prj.name}/src/**.cpp",
         "%{prj.name}/Application/**.h",
         "%{prj.name}/Application/**.cpp",
+        "%{prj.name}/vendor/glm/glm/*.hpp",
+        "%{prj.name}/vendor/glm/glm/*.inl",
+        "%{prj.name}/vendor/imgui/*.cpp",
+        "%{prj.name}/vendor/imgui/backends/imgui_impl_glfw.cpp",
+        "%{prj.name}/vendor/imgui/backends/imgui_impl_opengl3.cpp"
     }
     
     includedirs
@@ -39,8 +53,17 @@ project "Core"
         "%{prj.name}/res",
         "%{prj.name}/src/Application",
         "%{IncludeDir.spdlog}",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.glm}"
     }
-    
+
+    links 
+    {
+        "GLFW",
+        "Glad",
+    }
 
     defines 
     {
@@ -83,6 +106,10 @@ project "App"
         "%{prj.name}/src",
         "%{wks.location}/Core/src", 
         "%{IncludeDir.spdlog}",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.ImGui}",
     }
 
     filter {"configurations:Debug"}
