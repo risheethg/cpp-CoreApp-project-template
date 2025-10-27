@@ -10,9 +10,11 @@ namespace Project {
 	public:
 		VertexArray();
 		~VertexArray();
-		
 
-		void AddVertexBuffer(VertexBuffer vb, VertexBufferLayout layout);
+		void Bind() const;
+		void Unbind() const;
+
+		void AddVertexBuffer(VertexBuffer& vb, const VertexBufferLayout& layout);
 
 	private:
 		unsigned int m_RendererID;
