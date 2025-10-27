@@ -3,22 +3,32 @@
 
 namespace Project {
 
-	VertexBuffer::VertexBuffer(const void* data, unsigned int size) {
-		glGenBuffers(1, &m_RendererID);
-		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+	VertexArray::VertexArray() {
+		glGenVertexArrays(1, &m_RendererID);
 	}
 
-	VertexBuffer::~VertexBuffer() {
-		glDeleteBuffers(1, &m_RendererID);
+	VertexArray::~VertexArray() {
+		glBindVertexArray(0);
 	}
 
-	void VertexBuffer::Bind() {
-		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+	void VertexArray::Bind() const {
+		glBindVertexArray(m_RendererID);
 	}
 
-	void VertexBuffer::Unbind() {
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	void VertexArray::Unbind() const {
+		glBindVertexArray(0);
 	}
 
+	void VertexArray::AddVertexBuffer(VertexBuffer& vb,const VertexBufferLayout& layout) {
+		Bind();
+		vb.Bind();
+		std::vector<VertexBufferElement> elements = layout.GetElements();
+		unsigned int offset = 0;
+		for (unsigned int i = 0; i < elements.size(); i++) {
+			VertexBufferElement element = elements[i];
+			glEnableVertexAttribArray(i);
+			glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.GetStride(), (const void*)offset);
+			offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
+		}
+	}
 }
