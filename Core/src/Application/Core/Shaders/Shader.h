@@ -1,7 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 
-namesapace Project {
+namespace Project {
 
     struct ShaderSource {
         std::string VertexSource;
