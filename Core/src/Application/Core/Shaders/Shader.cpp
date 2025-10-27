@@ -53,7 +53,7 @@ namespace Project {
 
     unsigned int Shader::CompileShader(unsigned int type, const std::string& source)
     {
-        unsigned int id = glCreateShader(type); // 'id' is a shader object ID
+        unsigned int id = glCreateShader(type);
         const char* src = source.c_str();
 
         glShaderSource(id, 1, &src, NULL);
@@ -63,38 +63,38 @@ namespace Project {
         glGetShaderiv(id, GL_COMPILE_STATUS, &status);
         if (status == GL_FALSE)
         {
-            LOG_CORE_ERROR("Failed to compile {0} shader!", (type == GL_VERTEX_SHADER) ? "Vertex" : "Fragment");
+            PROJECT_CORE_ERROR("Failed to compile {0} shader!", (type == GL_VERTEX_SHADER) ? "Vertex" : "Fragment");
 
-            int length; // No need for 'num'
-            glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-            // Ensure length is positive before allocating
+            int length; 
+            glGetShaderiv(id, GL_INFO_PROJECT_LENGTH, &length);
+            
             if (length > 0) {
                 char* log = (char*)alloca(sizeof(char) * length);
-                glGetShaderInfoLog(id, length, NULL, log); // Pass NULL for length to glGetShaderInfoLog
-                LOG_CORE_ERROR("{0} Shader Error Log : {1}\n", (type == GL_VERTEX_SHADER) ? "Vertex" : "Fragment", log);
+                glGetShaderInfoLog(id, length, NULL, log); 
+                PROJECT_CORE_ERROR("{0} Shader Error Log : {1}\n", (type == GL_VERTEX_SHADER) ? "Vertex" : "Fragment", log);
             }
             else {
-                LOG_CORE_ERROR("{0} Shader Error Log: (No info log available)\n", (type == GL_VERTEX_SHADER) ? "Vertex" : "Fragment");
+                PROJECT_CORE_ERROR("{0} Shader Error Log: (No info log available)\n", (type == GL_VERTEX_SHADER) ? "Vertex" : "Fragment");
             }
 
-            glDeleteShader(id); // <--- CORRECTED: Delete the SHADER object, not a program
-            return 0; // Indicate compilation failure by returning 0
+            glDeleteShader(id); 
+            return 0;
         }
-        return id; // Return the successfully compiled shader ID
+        return id; 
     }
 
     unsigned int Shader::CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
     {
-        unsigned int programID = glCreateProgram(); // Renamed 'shader' to 'programID' for clarity
+        unsigned int programID = glCreateProgram(); 
         unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
         unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-        if (vs == 0 || fs == 0) { // If either shader failed to compile
-            LOG_CORE_ERROR("One or both shaders failed to compile. Not linking program.");
-            glDeleteProgram(programID); // Delete the program object
-            if (vs != 0) glDeleteShader(vs); // Clean up any successfully compiled shader
+        if (vs == 0 || fs == 0) { 
+            PROJECT_CORE_ERROR("One or both shaders failed to compile. Not linking program.");
+            glDeleteProgram(programID); 
+            if (vs != 0) glDeleteShader(vs); 
             if (fs != 0) glDeleteShader(fs);
-            return 0; // Return 0 to indicate program creation failure
+            return 0; 
         }
 
         glAttachShader(programID, vs);
@@ -104,45 +104,44 @@ namespace Project {
         int linkStatus;
         glGetProgramiv(programID, GL_LINK_STATUS, &linkStatus);
         if (linkStatus == GL_FALSE) {
-            LOG_CORE_ERROR("Shader program linking FAILED!");
+            PROJECT_CORE_ERROR("Shader program linking FAILED!");
             int length;
-            glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &length);
+            glGetProgramiv(programID, GL_INFO_PROJECT_LENGTH, &length);
             if (length > 0) {
                 char* message = (char*)alloca(length * sizeof(char));
                 glGetProgramInfoLog(programID, length, NULL, message);
-                LOG_CORE_ERROR("Program Link Error Log: {0}", message);
+                PROJECT_CORE_ERROR("Program Link Error Log: {0}", message);
             }
             else {
-                LOG_CORE_ERROR("Program Link Error Log: (No info log available)\n");
+                PROJECT_CORE_ERROR("Program Link Error Log: (No info log available)\n");
             }
             glDeleteProgram(programID);
             glDeleteShader(vs);
             glDeleteShader(fs);
-            return 0; // Return 0 to indicate program creation failure
+            return 0; 
         }
 
-        glValidateProgram(programID); // Call glValidateProgram *after* linking
+        glValidateProgram(programID); 
         int validateStatus;
         glGetProgramiv(programID, GL_VALIDATE_STATUS, &validateStatus);
         if (validateStatus == GL_FALSE) {
-            LOG_CORE_ERROR("Shader program validation FAILED!");
+            PROJECT_CORE_ERROR("Shader program validation FAILED!");
             int length;
-            glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &length);
+            glGetProgramiv(programID, GL_INFO_PROJECT_LENGTH, &length);
             if (length > 0) {
                 char* message = (char*)alloca(length * sizeof(char));
                 glGetProgramInfoLog(programID, length, NULL, message);
-                LOG_CORE_ERROR("Program Validation Error Log: {0}", message);
+                PROJECT_CORE_ERROR("Program Validation Error Log: {0}", message);
             }
             else {
-                LOG_CORE_ERROR("Program Validation Error Log: (No info log available)\n");
+                PROJECT_CORE_ERROR("Program Validation Error Log: (No info log available)\n");
             }
-            // Note: Validation failure isn't always fatal, but it's a strong hint of issues.
-            // For now, let's still return the programID, but be aware.
+            
         }
 
-        glDetachShader(programID, vs); // Detach shaders once linked
+        glDetachShader(programID, vs); 
         glDetachShader(programID, fs);
-        glDeleteShader(vs); // Delete individual shader objects after they are detached and linked
+        glDeleteShader(vs); 
         glDeleteShader(fs);
 
         return programID;
